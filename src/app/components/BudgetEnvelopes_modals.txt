@@ -1,0 +1,188 @@
+
+      {/* Модальное окно перевода между конвертами */}
+      {showTransferModal && transferToEnvelope && (() => {
+        const allEnvelopes = ['Education', 'Health and Beauty', 'Food', 'Regular', 'Save'];
+        const availableEnvelopes = allEnvelopes.filter(name => name !== transferToEnvelope);
+
+        return (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md border border-gray-200">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <div>
+                  <h3 className="font-light text-gray-800">Пополнить конверт</h3>
+                  <p className="text-xs text-gray-500 mt-0.5">{transferToEnvelope}</p>
+                </div>
+                <button
+                  onClick={() => setShowTransferModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="px-6 py-4 space-y-4">
+                {/* Выбор конверта-источника */}
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1.5 font-medium uppercase tracking-wider">
+                    Откуда взять деньги
+                  </label>
+                  <select
+                    value={transferFromEnvelope}
+                    onChange={(e) => setTransferFromEnvelope(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-300 font-light"
+                  >
+                    <option value="">Выберите конверт</option>
+                    {availableEnvelopes.map(name => (
+                      <option key={name} value={name}>{name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Сумма */}
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1.5 font-medium uppercase tracking-wider">
+                    Сумма (₽)
+                  </label>
+                  <input
+                    type="number"
+                    value={transferAmount}
+                    onChange={(e) => setTransferAmount(e.target.value)}
+                    placeholder="Введите сумму"
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-300 font-light"
+                  />
+                </div>
+
+                {/* Комментарий */}
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1.5 font-medium uppercase tracking-wider">
+                    Комментарий (опционально)
+                  </label>
+                  <input
+                    type="text"
+                    value={transferComment}
+                    onChange={(e) => setTransferComment(e.target.value)}
+                    placeholder="Причина перевода"
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-300 font-light"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 px-6 py-4 border-t border-gray-100">
+                <button
+                  className="flex-1 px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-light"
+                  onClick={() => setShowTransferModal(false)}
+                >
+                  Отмена
+                </button>
+                <button
+                  className="flex-1 px-4 py-2 text-sm text-white rounded-lg transition-colors font-light"
+                  style={{ backgroundColor: '#E02F76' }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#C02866'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#E02F76'}
+                  onClick={handleSaveTransfer}
+                >
+                  Перевести
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Кнопка для открытия истории переводов */}
+      {envelopeTransfers.length > 0 && (
+        <div className="fixed bottom-6 right-6 z-40">
+          <button
+            onClick={() => setShowTransferHistoryModal(true)}
+            className="px-4 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center gap-2 text-sm font-medium"
+          >
+            <History className="w-4 h-4" />
+            История переводов
+          </button>
+        </div>
+      )}
+
+      {/* Модальное окно истории переводов */}
+      {showTransferHistoryModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl border border-gray-200 max-h-[80vh] overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center">
+                  <History className="w-5 h-5 text-pink-600" />
+                </div>
+                <div>
+                  <h3 className="font-light text-gray-800">История переводов</h3>
+                  <p className="text-xs text-gray-500 mt-0.5">Все транзакции между конвертами</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowTransferHistoryModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Список переводов */}
+            <div className="overflow-y-auto flex-1">
+              {envelopeTransfers.length === 0 ? (
+                <div className="px-6 py-12 text-center">
+                  <p className="text-gray-400 text-sm">Нет истории переводов</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-100">
+                  {envelopeTransfers.slice().reverse().map((transfer) => (
+                    <div key={transfer.id} className="px-6 py-4 hover:bg-gray-50/50 transition-colors">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-sm font-medium text-gray-700">{transfer.fromEnvelope}</span>
+                            <span className="text-gray-400">→</span>
+                            <span className="text-sm font-medium text-gray-700">{transfer.toEnvelope}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <span>{transfer.date}</span>
+                            {transfer.comment && (
+                              <>
+                                <span>•</span>
+                                <span className="truncate">{transfer.comment}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          <span className="text-sm font-medium text-pink-600">
+                            {transfer.amount.toLocaleString()} ₽
+                          </span>
+                          <button
+                            onClick={() => {
+                              if (window.confirm('Удалить этот перевод? Деньги вернутся в исходный конверт.')) {
+                                handleDeleteTransfer(transfer.id);
+                              }
+                            }}
+                            className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
+                            title="Удалить перевод"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Кнопка закрытия */}
+            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
+              <button
+                onClick={() => setShowTransferHistoryModal(false)}
+                className="w-full px-4 py-2 text-sm text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors font-light"
+              >
+                Закрыть
+              </button>
+            </div>
+          </div>
+        </div>
+      )}

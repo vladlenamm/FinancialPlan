@@ -1,0 +1,4 @@
+  const [editingFirstHalfValue, setEditingFirstHalfValue] = useState('');
+
+  const [editingSavingsItem, setEditingSavingsItem] = useState<{ item: 'investPiggyBank' | 'investments' | 'freeMoney'; field: 'plan' | 'actual' } | null>(null);
+  const [editingSavingsValue, setEditingSavingsValue] = useState('');
